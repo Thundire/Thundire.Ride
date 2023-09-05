@@ -1,11 +1,18 @@
 ﻿
+using Spectre.Console.Cli;
+
 using System.Text.Json;
 
 if (!Directory.Exists(Settings.ThundirePath)) Directory.CreateDirectory(Settings.ThundirePath);
 if (!Directory.Exists(Settings.LauncherPath)) Directory.CreateDirectory(Settings.LauncherPath);
 if (!File.Exists(Settings.SettingsPath)) File.Create(Settings.SettingsPath).Dispose();
 
+var app = new CommandApp();
+app.Configure(c =>
+{
 
+});
+await app.RunAsync(args);
 
 public static class Settings
 {
