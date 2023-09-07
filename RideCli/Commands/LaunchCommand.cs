@@ -1,5 +1,8 @@
 ﻿using CliWrap;
+
+using Spectre.Console;
 using Spectre.Console.Cli;
+using Command = CliWrap.Command;
 
 namespace RideCli.Commands;
 
@@ -14,8 +17,8 @@ public class LaunchCommand : AsyncCommand<LaunchSettings>
     {
         AppSettings appSettings = Settings.GetSettings();
         if (appSettings.Get(settings.Alias) is not { } launchSetting) return -2;
-        await Cli.Wrap(launchSetting.Launcher).WithWorkingDirectory(launchSetting.Path).WithArguments(launchSetting.Arguments)
-            .WithStandardOutputPipe(PipeTarget.ToDelegate(Spectre.Console.AnsiConsole.WriteLine)).ExecuteAsync();
+        Command cmd = Cli.Wrap(launchSetting.Launcher).WithWorkingDirectory(launchSetting.Path).WithArguments(launchSetting.Arguments) | AnsiConsole.WriteLine;
+	    await cmd.ExecuteAsync(Settings.CancellationTokenSource.Token);
         return 0;
     }
 }

@@ -8,6 +8,8 @@ public static class Settings
 	public static readonly string LauncherPath = Path.Combine(ThundirePath, "RideCli");
 	public static readonly string SettingsPath = Path.Combine(LauncherPath, "Settings.json");
 
+	public static readonly CancellationTokenSource CancellationTokenSource = new();
+	public static bool CancellationDisposed { get; private set; }
 	public static AppSettings GetSettings()
 	{
 		var data = File.ReadAllText(SettingsPath);
@@ -22,6 +24,15 @@ public static class Settings
 	public static void Save(AppSettings paths)
 	{
 		File.WriteAllText(SettingsPath, JsonSerializer.Serialize(paths));
+	}
+
+	public static void StopProcesses()
+	{
+		if(CancellationDisposed) return;
+		CancellationDisposed = true;
+		if (!CancellationTokenSource.IsCancellationRequested)
+			CancellationTokenSource.Cancel();
+		CancellationTokenSource.Dispose();
 	}
 }
 
