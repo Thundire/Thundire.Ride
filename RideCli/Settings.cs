@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Generic;
+using System.Text.Json;
 
 namespace RideCli;
 
@@ -10,20 +11,24 @@ public static class Settings
 
 	public static readonly CancellationTokenSource CancellationTokenSource = new();
 	public static bool CancellationDisposed { get; private set; }
+
+	private static AppSettings? AppSettings { get; set; }
+
 	public static AppSettings GetSettings()
 	{
+		if (AppSettings is not null) return AppSettings;
 		var data = File.ReadAllText(SettingsPath);
-		AppSettings? appSettings = null;
 		if (data is { Length: > 2 })
 		{
-			appSettings = JsonSerializer.Deserialize<AppSettings>(data);
+			AppSettings = JsonSerializer.Deserialize<AppSettings>(data);
 		}
-		return appSettings ?? new AppSettings();
+		return AppSettings ?? new AppSettings();
 	}
 
-	public static void Save(AppSettings paths)
+	public static void Save()
 	{
-		File.WriteAllText(SettingsPath, JsonSerializer.Serialize(paths));
+		if(AppSettings is not null)
+			File.WriteAllText(SettingsPath, JsonSerializer.Serialize(AppSettings));
 	}
 
 	public static void StopProcesses()
@@ -39,6 +44,8 @@ public static class Settings
 public class AppSettings
 {
 	public Dictionary<string, LaunchSetting> LaunchSettings { get; set; } = new();
+	public Dictionary<string, string> KindPaths { get; set; } = new();
+	public string SelectedKindPath { get; set; } = string.Empty;
 
 	public void Register(string alias, LaunchSetting settings)
 	{
@@ -54,6 +61,33 @@ public class AppSettings
 	{
 		if (LaunchSettings.TryGetValue(alias, out var setting)) return setting;
 		return default;
+	}
+
+	public string? GetKindPath(string alias)
+	{
+		if (KindPaths.TryGetValue(alias, out var setting)) return setting;
+		return default;
+	}
+
+	public void Register(string alias, string kindPath)
+	{
+		if (KindPaths.ContainsKey(alias))
+		{
+			KindPaths[alias] = kindPath;
+			return;
+		}
+		KindPaths.Add(alias, kindPath);
+		if (KindPaths.Count == 1)
+		{
+			SelectedKindPath = kindPath;
+		}
+	}
+
+	public (string alias, string path)[] ListKindPaths() => KindPaths.Select(x=>(alias:x.Key, path: x.Value)).ToArray();
+	public string SelectedKindPaths() => SelectedKindPath;
+	public void ChangeSelectedKindPath(string alias)
+	{
+		if(KindPaths.TryGetValue(alias, out var path)) SelectedKindPath = path;
 	}
 }
 

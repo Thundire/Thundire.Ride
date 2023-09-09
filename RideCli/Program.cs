@@ -12,10 +12,16 @@ Console.CancelKeyPress              += OnExit;
 var app = new CommandApp();
 app.Configure(c =>
 {
-	c.AddCommand<RegisterCommand>("reg");
+	c.AddBranch("reg", b =>
+	{
+		b.AddCommand<RegisterLauncherCommand>("launch");
+		b.AddCommand<RegisterKindPathCommand>("kind-path");
+	});
+	
 	c.AddCommand<LaunchCommand>("launch");
+	c.AddCommand<SearchDirectoryCommand>("search");
 });
-await app.RunAsync(args);
+return await app.RunAsync(args);
 
 static void OnExit(object? sender, EventArgs e)
 {
