@@ -22,7 +22,7 @@ public static class Settings
 		{
 			AppSettings = JsonSerializer.Deserialize<AppSettings>(data);
 		}
-		return AppSettings ?? new AppSettings();
+		return AppSettings ??= new();
 	}
 
 	public static void Save()
