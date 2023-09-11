@@ -20,6 +20,7 @@ public class SearchDirectorySettings : CommandSettings
 internal class SearchDirectoryCommand : Command<SearchDirectorySettings>
 {
 	private string? KindPath { get; set; }
+	private const string ExitWord = "None";
 
 	public override int Execute([NotNull] CommandContext context, [NotNull] SearchDirectorySettings settings)
 	{
@@ -40,7 +41,7 @@ internal class SearchDirectoryCommand : Command<SearchDirectorySettings>
 
 		Result<string> result = FindDirectory(organization, searchDirectory);
 
-		if (result.IsSuccess) Open(result.Data!);
+		if (result.IsSuccess && result.Data != ExitWord) Open(result.Data!);
 
 		return result.ExitCode;
 	}
@@ -80,7 +81,7 @@ internal class SearchDirectoryCommand : Command<SearchDirectorySettings>
 			AnsiConsole.WriteLine("Искомая поддиректория не найдена");
 			return ResultFactory.Failure<string>(2);
 		}
-
+		data.Insert(0, ExitWord);
 		var selectedPath = AnsiConsole.Prompt(new SelectionPrompt<string>()
 			.Title("Найдено несколько директорий, какая ваша?")
 			.PageSize(10)

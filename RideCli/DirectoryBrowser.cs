@@ -5,7 +5,7 @@ public class DirectoryBrowser
 {
 	public static DirectoryInfo[] Directories(string root, string searchPattern)
 	{
-		return new DirectoryInfo(root).EnumerateDirectories().Where(d => d.Name.ToLowerInvariant().Contains(searchPattern)).Where(x =>
+		return new DirectoryInfo(root).EnumerateDirectories().Where(d => d.Name.Contains(searchPattern, StringComparison.InvariantCultureIgnoreCase)).Where(x =>
 		{
 			try
 			{
@@ -21,7 +21,6 @@ public class DirectoryBrowser
 
 	public static IEnumerable<string> FindSubdirectories(DirectoryInfo root, string searchDirectory)
 	{
-		var directoryPrefixLength = root.FullName.Length;
 		List<string> paths = new();
 		var enumerator = root.EnumerateDirectories("*.*", SearchOption.AllDirectories).GetEnumerator();
 
@@ -30,7 +29,9 @@ public class DirectoryBrowser
 			try
 			{
 				if (!enumerator.MoveNext()) break;
-				paths.Add(enumerator.Current.FullName[directoryPrefixLength..]);
+				var directory = enumerator.Current;
+				if (directory.Name.Contains(searchDirectory, StringComparison.InvariantCultureIgnoreCase))
+					paths.Add(directory.FullName);
 			}
 			catch (Exception)
 			{
@@ -38,9 +39,7 @@ public class DirectoryBrowser
 			}
 		}
 		enumerator.Dispose();
-
-		var stringDirectories = string.Join("\n", paths);
-		Regex regex = new($"^.+\\.*{searchDirectory}.*$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
-		return regex.Matches(stringDirectories).Select(x => root.FullName + x.Value);
+		
+		return paths;
 	}
 }
