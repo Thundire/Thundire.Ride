@@ -7,9 +7,6 @@ using System.Threading.Tasks;
 
 namespace RideCli;
 internal class ProcessBuilder {
-
-    Process? _process;
-
     List<string> _arguments = [];
     string? _workingDirectory;
     string? _fileName;
@@ -19,10 +16,13 @@ internal class ProcessBuilder {
     Encoding? _errorEncoding;
 
     List<Action<string>> _outputActions = [];
+    List<Action<string>> _errorActions = [];
 
+    event Action<string?>? Error;
     event Action<string?>? Print;
 
-    bool _outPutSet;
+    bool _outputSet;
+    bool _errorSet;
 
     public ProcessBuilder()
     {
@@ -48,24 +48,39 @@ internal class ProcessBuilder {
         if (_outputEncoding is not null) startInfo.StandardOutputEncoding = _outputEncoding;
         if (_errorEncoding is not null) startInfo.StandardErrorEncoding = _errorEncoding;
 
-        _process = Process.Start(startInfo);
-        if (_process is null) return;
+        _outputSet = _outputActions.Count > 0;
+        _errorSet = _errorActions.Count > 0;
 
-        _process.OutputDataReceived += OutputDataReceived;
-        _process.ErrorDataReceived += ErrorDataReceived;
+        if (_outputSet) startInfo.RedirectStandardOutput = true;
+        if (_errorSet) startInfo.RedirectStandardError = true;
 
-        _outPutSet = _outputActions.Count > 0; 
+        using Process? process = Process.Start(startInfo);
+        if (process is null) return;
 
-        if(_outPutSet) {
+        if(_outputSet) {
             foreach (var action in _outputActions)
             {
                 Print += action;
             }
-            _process.BeginOutputReadLine();
-            _process.BeginErrorReadLine();
+            process.OutputDataReceived += OutputDataReceived;
+            process.BeginOutputReadLine();
+        }
+        
+        if(_errorSet) {
+            foreach (var action in _errorActions)
+            {
+                Error += action;
+            }
+            process.ErrorDataReceived += ErrorDataReceived;
+            process.BeginErrorReadLine();
         }
 
-        await _process.WaitForExitAsync(token);
+        try {
+            await process.WaitForExitAsync(token);
+        }
+        catch (OperationCanceledException) {
+            return;
+        }
     }
 
     public ProcessBuilder WithWorkingDirectory(string workingDirectory) {
@@ -113,8 +128,15 @@ internal class ProcessBuilder {
         return this;
     }
     
-    private void ErrorDataReceived(object sender, DataReceivedEventArgs e) => Print?.Invoke(e.Data);
-    private void OutputDataReceived(object sender, DataReceivedEventArgs e) => Print?.Invoke(e.Data);
+    public ProcessBuilder WithError(Action<string> output) {
+        _errorActions.Add(output);
+        return this;
+    }
+
+
+    
+    private void ErrorDataReceived(object sender, DataReceivedEventArgs e) => Error?.Invoke(e.Data ?? string.Empty);
+    private void OutputDataReceived(object sender, DataReceivedEventArgs e) => Print?.Invoke(e.Data ?? string.Empty);
 
     public static ProcessBuilder Create(string? fileName = default) => fileName is { Length: > 0 } ? new (fileName) : new ();
 
