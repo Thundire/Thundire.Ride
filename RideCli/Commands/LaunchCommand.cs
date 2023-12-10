@@ -14,7 +14,7 @@ public class LaunchCommand : AsyncCommand<LaunchSettings>
     {
         AppSettings appSettings = Settings.GetSettings();
         if (appSettings.Get(settings.Alias) is not { } launchSetting) return -2;
-        ProcessBuilder cmd = ProcessBuilder.Create(launchSetting.Launcher).WithWorkingDirectory(launchSetting.Path).WithArguments(launchSetting.Arguments) | AnsiConsole.WriteLine;
+        ProcessBuilder cmd = ProcessBuilder.Create(launchSetting.Launcher).WithWorkingDirectory(launchSetting.Path).WithArgument(launchSetting.Arguments) | AnsiConsole.WriteLine;
 	    await cmd.Execute(Settings.CancellationTokenSource.Token);
         return 0;
     }

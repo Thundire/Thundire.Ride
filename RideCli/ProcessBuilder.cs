@@ -39,9 +39,7 @@ internal class ProcessBuilder {
         ProcessStartInfo startInfo = new(_fileName);
         if (_workingDirectory is not null) startInfo.WorkingDirectory = _workingDirectory;
         if (_arguments.Count > 0) {
-            foreach (var argument in _arguments) {
-                startInfo.ArgumentList.Add(argument);
-            }
+            startInfo.Arguments = string.Join(" ", _arguments);
         }
 
         if (_inputEncoding is not null) startInfo.StandardInputEncoding = _inputEncoding;
