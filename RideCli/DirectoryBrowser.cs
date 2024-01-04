@@ -1,11 +1,9 @@
-﻿using System.Text.RegularExpressions;
-
-namespace RideCli;
+﻿namespace RideCli;
 public class DirectoryBrowser
 {
-	public static DirectoryInfo[] Directories(string root, string searchPattern)
+	public static DirectoryInfo[] Directories(DirectoryInfo root, string searchPattern)
 	{
-		return new DirectoryInfo(root).EnumerateDirectories().Where(d => d.Name.Contains(searchPattern, StringComparison.InvariantCultureIgnoreCase)).Where(x =>
+		return root.EnumerateDirectories().Where(d => d.Name.Contains(searchPattern, StringComparison.InvariantCultureIgnoreCase)).Where(x =>
 		{
 			try
 			{
@@ -19,27 +17,27 @@ public class DirectoryBrowser
 		}).ToArray();
 	}
 
-	public static IEnumerable<string> FindSubdirectories(DirectoryInfo root, string searchDirectory)
+	public static IEnumerable<DirectoryInfo> FindSubdirectories(DirectoryInfo root, string searchDirectory)
 	{
-		List<string> paths = new();
 		var enumerator = root.EnumerateDirectories("*.*", SearchOption.AllDirectories).GetEnumerator();
-
+		DirectoryInfo? directory;
 		while (true)
 		{
+			directory = null;
 			try
 			{
 				if (!enumerator.MoveNext()) break;
-				var directory = enumerator.Current;
-				if (directory.Name.Contains(searchDirectory, StringComparison.InvariantCultureIgnoreCase))
-					paths.Add(directory.FullName);
+				directory = enumerator.Current;
+				
 			}
 			catch (Exception)
 			{
 				// ignore
 			}
+
+			if (directory?.Name.Contains(searchDirectory, StringComparison.InvariantCultureIgnoreCase) is true)
+				yield return directory;
 		}
 		enumerator.Dispose();
-		
-		return paths;
 	}
 }
