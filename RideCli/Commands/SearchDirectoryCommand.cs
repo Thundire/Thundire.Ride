@@ -80,6 +80,8 @@ internal class SearchDirectoryCommand : Command<SearchDirectorySettings>
 		{
 			AnsiConsole.WriteLine("Искомая поддиректория не найдена");
 			return ResultFactory.Failure<string>(2);
+		}else if(data.Count == 1) {
+			return ResultFactory.Success(data[0]);
 		}
 		data.Insert(0, ExitWord);
 		var selectedPath = AnsiConsole.Prompt(new SelectionPrompt<string>()
