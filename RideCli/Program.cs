@@ -21,6 +21,7 @@ app.Configure(c =>
 	c.AddCommand<LaunchCommand>("launch");
 	c.AddCommand<SearchDirectoryCommand>("search");
 });
+app.SetDefaultCommand<SearchDirectoryCommand>();
 return await app.RunAsync(args);
 
 static void OnExit(object? sender, EventArgs e)
