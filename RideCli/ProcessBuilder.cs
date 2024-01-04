@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace RideCli;
 internal class ProcessBuilder {
-    List<string> _arguments = [];
+	readonly List<string> _arguments = [];
     string? _workingDirectory;
     string? _fileName;
 
@@ -15,8 +11,8 @@ internal class ProcessBuilder {
     Encoding? _outputEncoding;
     Encoding? _errorEncoding;
 
-    List<Action<string>> _outputActions = [];
-    List<Action<string>> _errorActions = [];
+	readonly List<Action<string>> _outputActions = [];
+	readonly List<Action<string>> _errorActions = [];
 
     event Action<string?>? Error;
     event Action<string?>? Print;

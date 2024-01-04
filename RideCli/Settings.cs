@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace RideCli;
 
@@ -43,8 +42,8 @@ public static class Settings
 
 public class AppSettings
 {
-	public Dictionary<string, LaunchSetting> LaunchSettings { get; set; } = new();
-	public Dictionary<string, string> KindPaths { get; set; } = new();
+	public Dictionary<string, LaunchSetting> LaunchSettings { get; set; } = [];
+	public Dictionary<string, string> KindPaths { get; set; } = [];
 	public string SelectedKindPath { get; set; } = string.Empty;
 
 	public void Register(string alias, LaunchSetting settings)
