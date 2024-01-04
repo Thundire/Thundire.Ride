@@ -1,5 +1,5 @@
 ﻿namespace RideCli;
-public class DirectoryBrowser
+internal static class DirectoryBrowser
 {
 	public static DirectoryInfo[] Directories(DirectoryInfo root, string searchPattern)
 	{

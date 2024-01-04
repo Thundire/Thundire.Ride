@@ -7,7 +7,7 @@ using Spectre.Console.Cli;
 namespace RideCli.Commands;
 
 
-public class SearchDirectorySettings : CommandSettings
+internal sealed class SearchDirectorySettings : CommandSettings
 {
 	[CommandOption("-k | --kind-path")] public string? KindPath { get; set; }
 	[CommandOption("-d | --default")] public bool? AsDefault { get; set; }
@@ -19,7 +19,7 @@ public class SearchDirectorySettings : CommandSettings
 	[CommandArgument(1, "[sub-search]")]
 	public string SubSearchPattern { get; set; } = string.Empty;
 }
-internal class SearchDirectoryCommand : Command<SearchDirectorySettings>
+internal sealed class SearchDirectoryCommand : Command<SearchDirectorySettings>
 {
 	private string? KindPath { get; set; }
 	private const string _exitWord = "None";

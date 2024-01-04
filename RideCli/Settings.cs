@@ -2,7 +2,7 @@
 
 namespace RideCli;
 
-public static class Settings
+internal static class Settings
 {
 	public static readonly string ThundirePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Thundire");
 	public static readonly string LauncherPath = Path.Combine(ThundirePath, "RideCli");
@@ -40,7 +40,7 @@ public static class Settings
 	}
 }
 
-public class AppSettings
+internal sealed class AppSettings
 {
 	public Dictionary<string, LaunchSetting> LaunchSettings { get; set; } = [];
 	public Dictionary<string, string> KindPaths { get; set; } = [];
@@ -90,4 +90,4 @@ public class AppSettings
 	}
 }
 
-public record LaunchSetting(string Path, string Launcher, string Arguments);
+internal sealed record LaunchSetting(string Path, string Launcher, string Arguments);

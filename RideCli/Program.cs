@@ -20,6 +20,10 @@ app.Configure(c =>
 	
 	c.AddCommand<LaunchCommand>("launch");
 	c.AddCommand<SearchDirectoryCommand>("search");
+
+	c.AddBranch("manage", b => {
+		b.AddCommand<ListRegisteredCommandsCommand>("list");
+	});
 });
 app.SetDefaultCommand<SearchDirectoryCommand>();
 return await app.RunAsync(args);

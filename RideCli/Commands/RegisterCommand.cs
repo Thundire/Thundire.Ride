@@ -3,24 +3,24 @@ using Spectre.Console.Cli;
 
 namespace RideCli.Commands;
 
-public class RegisterPathSettings : CommandSettings
+internal class RegisterPathSettings : CommandSettings
 {
     [CommandArgument(0, "[alias]")] public string Alias { get; set; } = string.Empty;
     [CommandArgument(1, "[path]")] public string Path { get; set; } = string.Empty;
 }
 
-public class RegisterLauncherSettings : RegisterPathSettings
+internal sealed class RegisterLauncherSettings : RegisterPathSettings
 {
     [CommandArgument(2, "[launcher]")] public string Launcher { get; set; } = string.Empty;
     [CommandArgument(3, "[arguments]")] public string Arguments { get; set; } = string.Empty;
 }
 
-public class RegisterKindPathSettings : RegisterPathSettings
+internal sealed class RegisterKindPathSettings : RegisterPathSettings
 {
     [CommandOption("-d | --default")] public bool? AsDefault { get; set; }
 }
 
-public class RegisterLauncherCommand : Command<RegisterLauncherSettings>
+internal sealed class RegisterLauncherCommand : Command<RegisterLauncherSettings>
 {
     public override int Execute([NotNull] CommandContext context, [NotNull] RegisterLauncherSettings settings)
     {
@@ -38,7 +38,7 @@ public class RegisterLauncherCommand : Command<RegisterLauncherSettings>
         return 0;
     }
 }
-public class RegisterKindPathCommand : Command<RegisterKindPathSettings>
+internal sealed class RegisterKindPathCommand : Command<RegisterKindPathSettings>
 {
     public override int Execute([NotNull] CommandContext context, [NotNull] RegisterKindPathSettings settings)
     {
