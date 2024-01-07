@@ -11,8 +11,8 @@ internal class RegisterPathSettings : CommandSettings
 internal sealed class RegisterLauncherSettings : RegisterPathSettings {
 	[CommandArgument(1, "<launcher>")] public string Launcher { get; set; } = string.Empty;
     [CommandArgument(2, "[arguments]")] public string Arguments { get; set; } = string.Empty;
-	[CommandOption("-wp | --workdir")] public string? WorkDirectory { get; set; }
-	[CommandOption("-adm | --admin")] public bool? AsAdmin { get; set; }
+	[CommandOption("--workdir")] public string? WorkDirectory { get; set; }
+	[CommandOption("--admin")] public bool? AsAdmin { get; set; }
 }
 
 internal sealed class RegisterKindPathSettings : RegisterPathSettings {

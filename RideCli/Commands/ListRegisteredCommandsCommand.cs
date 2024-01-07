@@ -18,7 +18,7 @@ internal sealed class ListRegisteredCommandsCommand : Command<ListRegisteredComm
 			
 			foreach (var (alias, setting) in appSettings.LaunchSettings)
             {
-				AnsiConsole.WriteLine($"""ride reg launch {alias} "{setting.Launcher}" "{setting.Arguments}" "{(setting.WorkDirectory is {Length: >0} workdir ? $"-wd {workdir}" : "")}" {(setting.AsAdmin ? "-adm" : "")}""");
+				AnsiConsole.WriteLine($"""ride reg launch {alias} "{setting.Launcher}" "{setting.Arguments}" "{(setting.WorkDirectory is {Length: >0} workdir ? $"--workdir {workdir}" : "")}" {(setting.AsAdmin ? "--admin" : "")}""");
             }
         }
 		if (settings.ManagedCommands is ManagedCommands.All or ManagedCommands.Search) {
