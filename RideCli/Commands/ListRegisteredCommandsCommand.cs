@@ -25,7 +25,7 @@ internal sealed class ListRegisteredCommandsCommand : Command<ListRegisteredComm
 			AnsiConsole.WriteLine("Search commands:");
 
 			foreach (var (alias, kindPath) in appSettings.KindPaths) {
-				AnsiConsole.WriteLine($"""ride reg search{(appSettings.SelectedKindPath == alias ? " -d" : "")} {alias} "{kindPath}" """);
+				AnsiConsole.WriteLine($"""ride reg search{(appSettings.SelectedKindPath == kindPath ? " -d" : "")} {alias} "{kindPath}" """);
 			}
 		}
 
