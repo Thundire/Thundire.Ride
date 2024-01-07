@@ -21,12 +21,12 @@ internal class ProcessBuilder {
     bool _errorSet;
     bool _asAdmin;
 
-    public ProcessBuilder()
+    private ProcessBuilder()
     {
         
     }
 
-    public ProcessBuilder(string fileName) {
+    private ProcessBuilder(string fileName) {
         _fileName = fileName;
     }
 
@@ -145,8 +145,9 @@ internal class ProcessBuilder {
     private void OutputDataReceived(object sender, DataReceivedEventArgs e) => Print?.Invoke(e.Data ?? string.Empty);
 
     public static ProcessBuilder Create(string? fileName = default) => fileName is { Length: > 0 } ? new (fileName) : new ();
+	public static void Open(string path) => Process.Start("explorer", path).Dispose();
 
-    public static ProcessBuilder operator | (ProcessBuilder builder, Action<string> outputAction) {
+	public static ProcessBuilder operator | (ProcessBuilder builder, Action<string> outputAction) {
         return builder.WithOutput(outputAction);
     }
 }

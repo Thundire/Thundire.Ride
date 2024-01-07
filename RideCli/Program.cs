@@ -23,6 +23,7 @@ app.Configure(c =>
 
 	c.AddBranch("manage", b => {
 		b.AddCommand<ListRegisteredCommandsCommand>("list");
+		b.AddCommand<OpenSettingsCommand>("settings-file");
 	});
 });
 app.SetDefaultCommand<SearchDirectoryCommand>();

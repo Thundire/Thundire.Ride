@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -52,7 +51,7 @@ internal sealed class SearchDirectoryCommand : Command<SearchDirectorySettings>
 			? FindDirectoryExtendedPrimarySearch(root, searchPattern) 
 			: FindDirectory(root, searchPattern, subSearchPattern);
 
-		if (result.IsSuccess && result.Data != _exitWord) Open(result.Data!);
+		if (result.IsSuccess && result.Data != _exitWord) ProcessBuilder.Open(result.Data!);
 
 		return result.ExitCode;
 	}
@@ -111,6 +110,4 @@ internal sealed class SearchDirectoryCommand : Command<SearchDirectorySettings>
 		settings.SearchPattern is { Length: > 0 }
 			? ValidationResult.Success()
 			: ValidationResult.Error("Не указан поисковой паттерн");
-
-	private static void Open(string path) => Process.Start("explorer", path).Dispose();
 }
