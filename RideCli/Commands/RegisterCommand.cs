@@ -5,19 +5,19 @@ namespace RideCli.Commands;
 
 internal class RegisterPathSettings : CommandSettings
 {
-    [CommandArgument(0, "[alias]")] public string Alias { get; set; } = string.Empty;
-    [CommandArgument(1, "[path]")] public string Path { get; set; } = string.Empty;
+    [CommandArgument(0, "<alias>")] public string Alias { get; set; } = string.Empty;
 }
 
-internal sealed class RegisterLauncherSettings : RegisterPathSettings
-{
-    [CommandArgument(2, "[launcher]")] public string Launcher { get; set; } = string.Empty;
-    [CommandArgument(3, "[arguments]")] public string Arguments { get; set; } = string.Empty;
+internal sealed class RegisterLauncherSettings : RegisterPathSettings {
+	[CommandArgument(1, "<launcher>")] public string Launcher { get; set; } = string.Empty;
+    [CommandArgument(2, "[arguments]")] public string Arguments { get; set; } = string.Empty;
+	[CommandOption("-wp | --workdir")] public string? WorkDirectory { get; set; }
+	[CommandOption("-adm | --admin")] public bool? AsAdmin { get; set; }
 }
 
-internal sealed class RegisterKindPathSettings : RegisterPathSettings
-{
-    [CommandOption("-d | --default")] public bool? AsDefault { get; set; }
+internal sealed class RegisterKindPathSettings : RegisterPathSettings {
+	[CommandArgument(1, "<path>")] public string Path { get; set; } = string.Empty;
+	[CommandOption("-d | --default")] public bool? AsDefault { get; set; }
 }
 
 internal sealed class RegisterLauncherCommand : Command<RegisterLauncherSettings>
@@ -27,7 +27,13 @@ internal sealed class RegisterLauncherCommand : Command<RegisterLauncherSettings
         try
         {
             AppSettings appSettings = Settings.GetSettings();
-            appSettings.Register(settings.Alias, new LaunchSetting(settings.Path, settings.Launcher, settings.Arguments));
+
+            LaunchSetting setting = new (settings.Launcher, settings.Arguments) {
+                WorkDirectory = settings.WorkDirectory ?? string.Empty,
+                AsAdmin = settings.AsAdmin ?? false
+			};
+            
+			appSettings.Register(settings.Alias, setting);
             Settings.Save();
         }
         catch

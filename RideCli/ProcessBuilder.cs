@@ -19,6 +19,7 @@ internal class ProcessBuilder {
 
     bool _outputSet;
     bool _errorSet;
+    bool _asAdmin;
 
     public ProcessBuilder()
     {
@@ -29,7 +30,7 @@ internal class ProcessBuilder {
         _fileName = fileName;
     }
 
-    public async Task Execute(CancellationToken token) {
+    public async ValueTask Execute(CancellationToken token) {
         if (string.IsNullOrEmpty(_fileName)) throw new InvalidOperationException("You not set filename of launching app");
 
         ProcessStartInfo startInfo = new(_fileName);
@@ -47,6 +48,13 @@ internal class ProcessBuilder {
 
         if (_outputSet) startInfo.RedirectStandardOutput = true;
         if (_errorSet) startInfo.RedirectStandardError = true;
+
+        if (_asAdmin) {
+            startInfo.Verb = "runas";
+            startInfo.UseShellExecute = true;
+            Process.Start(startInfo);
+            return;
+        }
 
         using Process? process = Process.Start(startInfo);
         if (process is null) return;
@@ -127,6 +135,10 @@ internal class ProcessBuilder {
         return this;
     }
 
+    public ProcessBuilder AsAdmin() {
+        _asAdmin = true;
+        return this;
+    }
 
     
     private void ErrorDataReceived(object sender, DataReceivedEventArgs e) => Error?.Invoke(e.Data ?? string.Empty);

@@ -90,4 +90,7 @@ internal sealed class AppSettings
 	}
 }
 
-internal sealed record LaunchSetting(string Path, string Launcher, string Arguments);
+internal sealed record LaunchSetting(string Launcher, string Arguments) {
+	public string WorkDirectory { get; init; } = string.Empty;
+	public bool AsAdmin { get; init; }
+};
